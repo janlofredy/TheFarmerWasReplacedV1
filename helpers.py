@@ -27,6 +27,8 @@ ALL_HATS = [
     # Hats.Wood_Trophy_Hat
 ]
 ALL_HATS = [Hats.Straw_Hat]
+worldSize = get_world_size()
+maxWorld = worldSize-1
 
 def flyToOrigin():
     flyTo(0,get_world_size()-1)
@@ -166,20 +168,69 @@ def spawnDronesLine(droneJob, orientation = "horizontal"):
         droneJob()
     return drones
 
-def spawnDronesFast(droneJob):
-    dronesSpawned = []
-    def droneLeftSpawner():
-        for _ in range(32):
-            move(East)
-        droneJob()
+def spawnDronesFast(droneJob, orientation = "horizontal"):
+    quarter = worldSize // 4
+    # ASSUMED STARTING AT 0,0
     def droneRightSpawner():
-        for _ in range(32):
+        for _ in range(quarter):
             move(West)
+        def droneQuarterLeftSpawner():
+            move(West)
+            for qMoves in range(quarter-1):
+                def dronePositionQuarters():
+                    for _ in range(quarter-qMoves-1):
+                        move(West)
+                    droneJob()
+                spawn_drone(dronePositionQuarters)
+            droneJob()
+        spawn_drone(droneQuarterLeftSpawner)
+        for qMoves in range(quarter-1):
+            def dronePositionQuarters():
+                for _ in range(quarter-qMoves-1):
+                    move(East)
+                droneJob()
+            spawn_drone(dronePositionQuarters)
         droneJob()
-    
-    dronesSpawned.append(spawn_drone(droneJob))
+    spawn_drone(droneRightSpawner)
+    for _ in range(quarter - 1):
+        move(East)
+    def droneQuarterRightSpawner():
+        move(East)
+        for qMoves in range(quarter-1):
+            def dronePositionQuarters():
+                for _ in range(quarter-qMoves-1):
+                    move(East)
+                droneJob()
+            spawn_drone(dronePositionQuarters)
+        droneJob()
+    spawn_drone(droneQuarterRightSpawner)
+    for qMoves in range(quarter-1):
+        def dronePositionQuarters():
+            for _ in range(quarter-qMoves-1):
+                move(West)
+            droneJob()
+        spawn_drone(dronePositionQuarters)
     droneJob() # FOR THE CHILD DRONES
-    return dronesSpawned
+
+def spawnDronesHalf(droneJob):
+    half = get_world_size()//2
+    def dronePositionRight(): #2nd Drone
+        move(West)
+        for hPos in range(half-1): # Spawned By 2nd Drone half-1 times
+            def dronePosition():
+                for _ in range(half-hPos-1):
+                    move(West)
+                droneJob()
+            spawn_drone(dronePosition)
+        droneJob()
+    spawn_drone(dronePositionRight) # Spawning of 2nd Drone
+    for hPos in range(half-1): # Spawned by 1st Drone half-1 times
+        def dronePosition():
+            for _ in range(half - hPos - 1):
+                move(East)
+            droneJob()
+        spawn_drone(dronePosition)
+    droneJob()
 
 def getCurrentPos():
     return (get_pos_x(), get_pos_y())
@@ -195,16 +246,16 @@ if __name__ == "__main__":
     clear()
     # for i in range(16):
     #     change_hat(Hats.Straw_Hat)
-    # spawnDronesFast(infiniteWait,32)
     # spawnDronesLine(testJob)
     # spawnDronesSimultaneously(testJob)
     # spawnDronesSimultaneouslyFun(testJob)
+    # spawnDronesHalf(testJob)
+    spawnDronesFast(testJob)
     # print(num_drones())
-    till()
-    move(North)
-    till()
-    plant(Entities.Cactus)
-    print(measure())
-    print(measure(South))
-    swap(South)
-
+    # till()
+    # move(North)
+    # till()
+    # plant(Entities.Cactus)
+    # print(measure())
+    # print(measure(South))
+    # swap(South)
