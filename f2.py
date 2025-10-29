@@ -1,6 +1,5 @@
 TOTAL = 32
 
-# Predefine all drone functions
 def drone0(): 
     droneLoop(0)
 def drone1(): 
@@ -72,31 +71,29 @@ droneFunctions = [
     drone16, drone17, drone18, drone19, drone20, drone21, drone22, drone23,
     drone24, drone25, drone26, drone27, drone28, drone29, drone30, drone31
 ]
-
-
-def spawnDronesBinaryTree():
+def spawnDrones3Tree():
     spawn_drone(droneFunctions[0])  # Start with root drone
-
+    
 def droneLoop(index):
-    target = index  # Final line position
+    target = index  # Final position in line
 
-    left = 2 * index + 1
-    right = 2 * index + 2
-
-    # Spawn children if within bounds
-    if left < TOTAL:
-        spawn_drone(droneFunctions[left])
-    if right < TOTAL:
-        spawn_drone(droneFunctions[right])
-
-    # Move to target position step-by-step
+    # Move first to avoid congestion
     while get_pos_x() != target:
-        # print("Drone: ", index, "at x: ", get_pos_x(), "moving to", target)
         if get_pos_x() < target:
             move(East)
         else:
             move(West)
-    # while True:
-    #     pass
 
-spawnDronesBinaryTree()
+    # Spawn up to 3 children
+    child1 = 3 * index + 1
+    child2 = 3 * index + 2
+    child3 = 3 * index + 3
+
+    if child1 < TOTAL:
+        spawn_drone(droneFunctions[child1])
+    if child2 < TOTAL:
+        spawn_drone(droneFunctions[child2])
+    if child3 < TOTAL:
+        spawn_drone(droneFunctions[child3])
+        
+spawnDrones3Tree()

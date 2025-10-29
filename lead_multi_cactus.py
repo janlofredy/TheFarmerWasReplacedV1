@@ -5,17 +5,19 @@ maxWorldIndex = worldSize-1
 def plantAndSortHorizontalDrones():
     # global droneId
     # droneId = get_pos_x()
-    for i in range(worldSize):
-        if get_ground_type() != Grounds.Soil:
-            till()
-        plant(Entities.Cactus)
-        if i > 0:
-            if measure(South) and measure() < measure(South):
-                swap(South)
-        move(North)
+    # for i in range(worldSize):
+    #     if get_ground_type() != Grounds.Soil:
+    #         till()
+    #     plant(Entities.Cactus)
+    #     if i > 0:
+    #         if measure(South) and measure() < measure(South):
+    #             swap(South)
+    #         else:
+    #             change_hat(Hats.Straw_Hat)
+    #     move(North)
     # bubbleUpandDown
     droneY = 0
-    top = maxWorldIndex-1
+    top = maxWorldIndex
     bottom = 0
     lastTopSorted = bottom
     lastBottomSorted = top
@@ -42,6 +44,7 @@ def plantAndSortHorizontalDrones():
         bottom = lastBottomSorted + 1
         if sorted:
             break
+    move(North)
 
 
 def sortVerticalDrones():
@@ -124,54 +127,56 @@ def cactusRepottingDroneJob():
             right = measure(East)
             up = measure(North) # can be none if not planted yet
             down = measure(South) 
+            
             if cactiSize == heuristicSize:
                 break
             if droneX > 0:
                 leftHeuristicSize = gridMap[droneX-1][droneY]
                 if left != leftHeuristicSize and cactiSize == leftHeuristicSize: 
                     swap(West)
+                    continue
             if droneX < maxWorldIndex:
                 rightHeuristicSize = gridMap[droneX+1][droneY]
                 if right != rightHeuristicSize and cactiSize == rightHeuristicSize: 
                     swap(East)
+                    continue
             if droneY < maxWorldIndex:
                 upHeuristicSize = gridMap[droneX][droneY+1]
                 if up != upHeuristicSize and cactiSize == upHeuristicSize:
                     swap(North)
+                    continue
+            if cactiSize <= heuristicSize+1 and cactiSize >= heuristicSize-1:
+                break
             till() # to grassland
             till() # to soil
         move(North)
-    if measure(West) == None:
-        move(West)
-        droneX = get_pos_x()
-        for droneY in range(droneY, -1, -1):
-            move(South)
-            while True:
-                plant(Entities.Cactus)
-                heuristicSize = gridMap[droneX][droneY]
-                leftHeuristicSize = None
-                # ALREADY PLANTED MEASURES
-                cactiSize = measure()
-                left = measure(West)
-                right = measure(East)
-                up = measure(North) # can be none if not planted yet
-                down = measure(South) 
-                if cactiSize == heuristicSize:
-                    break
-                if droneX > 0:
-                    leftHeuristicSize = gridMap[droneX-1][droneY]
-                    if left != leftHeuristicSize and cactiSize == leftHeuristicSize: 
-                        swap(West)
-                if droneX < maxWorldIndex:
-                    rightHeuristicSize = gridMap[droneX+1][droneY]
-                    if right != rightHeuristicSize and cactiSize == rightHeuristicSize: 
-                        swap(East)
-                if droneY < maxWorldIndex:
-                    upHeuristicSize = gridMap[droneX][droneY+1]
-                    if up != upHeuristicSize and cactiSize == upHeuristicSize:
-                        swap(North)
-                till() # to grassland
-                till() # to soil
+def cactusRepottingV2DroneJob():
+    size = 32 * 2
+    tolerance = 1.5
+    num_values = 10
+    droneX = get_pos_x()
+    for droneY in range(worldSize):
+        if get_ground_type() != Grounds.Soil:
+            till()
+        plant(Entities.Cactus)
+        move(North)
+    for droneY in range(worldSize):
+        while True:
+            cactiSize = measure()
+            segment_size = size / num_values
+            base_min = cactiSize * segment_size
+            base_max = (cactiSize + 1) * segment_size
+
+            tol = segment_size * tolerance
+            min_allowed = max(0, base_min - tol)
+            max_allowed = min(size, base_max + tol)
+
+            if min_allowed <= (droneX+droneY) <= max_allowed:
+                break
+            till() # to grassland
+            till() # to soil
+            plant(Entities.Cactus)
+        move(North)
 
 # harvest()
 # clear()
@@ -182,19 +187,161 @@ def cactusRepottingDroneJob():
 # for drone in drones:
 #     wait_for(drone)
 # harvest()
+def find_median(vs):
+    # Simple selection sort for 5 values
+    for i in range(4):
+        for j in range(i+1, 5):
+            if vs[j] < vs[i]:
+                vs[i], vs[j] = vs[j], vs[i]
+    return vs[2]  # middle value
+
+def sort_plus_shape():
+    # Step 1: Measure all values
+    center = measure()
+    north = measure(North)
+    south = measure(South)
+    east = measure(East)
+    west = measure(West)
+    values = [center, north, south, east, west]
+    # Step 2: Find median manually
+    median = find_median(values[:])  # use copy to avoid mutating original
+    # Step 3: Move median to center
+    if center != median:
+        if north == median:
+            swap(North)
+            center = median
+            north = measure(North)
+        elif south == median:
+            swap(South)
+            center = median
+            south = measure(South)
+        elif east == median:
+            swap(East)
+            center = median
+            east = measure(East)
+        elif west == median:
+            swap(West)
+            center = median
+            west = measure(West)
+    # Step 4: Identify highs and lows
+    highs = []
+    lows = []
+    for v in [north, south, east, west]:
+        if v > center:
+            highs.append(v)
+        elif v < center:
+            lows.append(v)
+    # Step 5: Place highs in North and East
+    for direction in [North, East]:
+        val = measure(direction)
+        if val <= center:
+            for alt in [South, West]:
+                alt_val = measure(alt)
+                if alt_val > center:
+                    swap(alt)
+                    swap(direction)
+                    break
+    # Step 6: Place lows in South and West
+    for direction in [South, West]:
+        val = measure(direction)
+        if val >= center:
+            for alt in [North, East]:
+                alt_val = measure(alt)
+                if alt_val < center:
+                    swap(alt)
+                    swap(direction)
+                    break
+
+
+
+
+def spawnBubbleSort():
+    move(West)
+    while get_pos_x() < maxWorldIndex:
+        if measure() > measure(East):
+            swap(East)
+        move(East)
+        spawn_drone(spawnBubbleSort)
+    move(North)
+
+def lineSpamSort():
+    # global droneId
+    # droneId = get_pos_x()
+    # for i in range(worldSize):
+    #     if get_ground_type() != Grounds.Soil:
+    #         till()
+
+    #     plant(Entities.Cactus)
+    #     # if i > 0:
+    #     #     if measure(South) and measure() < measure(South):
+    #     #         swap(South)
+    #     #     else:
+    #     #         change_hat(Hats.Straw_Hat)
+    #     move(North)
+    while get_pos_y() < maxWorldIndex:
+        for i in range(maxWorldIndex//2):
+            if get_pos_x() < maxWorldIndex:
+                if measure(East) != None and measure() > measure(East):
+                    swap(East)
+                else:
+                    change_hat(Hats.Straw_Hat)
+                # sort_plus_shape()
+            else:
+                # if measure(West) and measure() < measure(West):
+                #     swap(West)
+                # else:
+                #     change_hat(Hats.Straw_Hat)
+                change_hat(Hats.Straw_Hat)
+        move(North)
+    for i in range(maxWorldIndex//2):
+        if get_pos_x() < maxWorldIndex:
+            if measure(East) != None and measure() > measure(East):
+                swap(East)
+            else:
+                change_hat(Hats.Straw_Hat)
+            # sort_plus_shape()
+        else:
+            # if measure(West) and measure() < measure(West):
+            #     swap(West)
+            # else:
+            #     change_hat(Hats.Straw_Hat)
+            change_hat(Hats.Straw_Hat)
+    move(North)
 
 
 def justPlant():
     for droneY in range(worldSize):
         if get_ground_type() != Grounds.Soil:
             till()
-        # plant(Entities.Cactus)
-        if droneY < worldSize - 1:
-            move(North)
-# drones = spawnDronesLine(justPlant)
-# drones = spawnDronesSimultaneously(justPlant)
-drones = spawnDronesSimultaneouslyFun(cactusRepottingDroneJob)
-for drone in drones:
-    wait_for(drone)
-do_a_flip()
-harvest()
+        plant(Entities.Cactus)
+        # if droneY < worldSize - 1:
+        #     move(North)
+        move(North)
+def justMoveUp():
+    for _ in range(worldSize):
+        move(North)
+        change_hat(Hats.Straw_Hat)
+        change_hat(Hats.Straw_Hat)
+        change_hat(Hats.Straw_Hat)
+        change_hat(Hats.Straw_Hat)
+def sortJob():
+    lineSpamSort()
+    plantAndSortHorizontalDrones()
+
+# drones = spawnDronesFastest(justPlant)
+# while num_drones() > 1:
+#     pass
+# drones = spawnDronesFastest(lineSpamSort)
+# while num_drones() > 1:
+#     pass
+while num_items(Items.Cactus) < 33554432:
+    drones = spawnDronesFastest(cactusRepottingV2DroneJob)
+    while num_drones() > 1:
+        pass
+    drones = spawnDronesFastest(sortJob)
+    while num_drones() > 1:
+        pass
+    # drones = spawnDronesFastest(justMoveUp)
+    # while num_drones() > 1:
+    #     pass
+    harvest()
