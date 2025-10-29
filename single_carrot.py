@@ -14,6 +14,9 @@ def collectCarrots():
     jobEverywhere(harvestThenPlantCarrot)
 def loop():
     while True:
+        if num_items(Items.Carrot) >= 100000000:
+            break
         collectCarrots()
 if __name__ == "__main__":
+    prepare()
     loop()

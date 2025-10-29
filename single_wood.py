@@ -27,17 +27,23 @@ def prepare():
     clear()
 def mainLoop():
     clear()
-    mode = 3
+    mode = 2
     # BUSH ONLY MODE
     if mode == 1:
         while True:
+            if num_items(Items.Wood) >= 500000000:
+                break
             jobEverywhere(plantBushOnly)
     elif mode == 2:
         while True:
+            if num_items(Items.Wood) >= 500000000:
+                break
             jobEverywhere(plantBushAndTree)
     else:
         # BUSH AND TREE MODE
         while True:
+            if num_items(Items.Wood) >= 500000000:
+                break
             jobEverywhere(plantHayAndTree)
 if __name__ == "__main__":
     mainLoop()

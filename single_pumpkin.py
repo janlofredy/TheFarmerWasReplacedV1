@@ -40,6 +40,8 @@ def collectPumpkins():
 def mainLoop():
     prepare()
     while True:
+        if num_items(Items.Pumpkin) >= 10000000:
+            break
         collectPumpkins()
 if __name__ == "__main__":
     mainLoop()

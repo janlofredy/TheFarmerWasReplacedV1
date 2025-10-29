@@ -32,6 +32,8 @@ def collectSunflowers():
 def mainLoop():
     prepare()
     while True:
+        if num_items(Items.Power) >= 10000:
+            break
         collectSunflowers()
     
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 # ASSUME WORLD SIZE IS MULTIPLES OF 2
-set_world_size(10)
+# set_world_size(10)
 # clear()
 change_hat(Hats.Straw_Hat)
 while get_pos_x() > 0:
@@ -32,7 +32,11 @@ def moveCheckAndSetApple(direction):
         appleX, appleY = measure()
         tail += 1
         if (get_world_size() ** 2) - 1 == tail:
-            print("WE WIN", tail)
+            # print("WE WIN", tail)
+            move(North)
+            move(South)
+            move(East)
+            move(West)
             change_hat(Hats.Straw_Hat)
             tail = 1
             change_hat(Hats.Dinosaur_Hat)
@@ -90,5 +94,7 @@ for _ in range(prepDip):
     moveCheckAndSetApple(North)
 moveCheckAndSetApple(East)
 while True:
+    if num_items(Items.Bone) >= 33488928:
+        break
     dip(False, appleX, prepDip - appleY + 1)
     reset()

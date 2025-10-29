@@ -52,6 +52,8 @@ def collectCactus():
 def mainLoop():
     prepare()
     while True:
+        if num_items(Items.Cactus) >= 131072:
+            break
         collectCactus()
 
 if __name__ == "__main__":
