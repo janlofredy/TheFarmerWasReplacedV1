@@ -24,9 +24,8 @@
 # print(simulate('lead_multi_cactus',Unlocks,{Items.Pumpkin : 100000000000, Items.Power : 1000000000000},{"a":13},0,1000))
 
 # FASTEST RESET
-# print(simulate("full_reset", {}, {}, {}, -1, 1))
-# leaderboard_run(Leaderboards.Fastest_Reset, "full_reset", 100)
-
+# print(simulate("full_reset", {}, {}, {}, -1, 10000))
+leaderboard_run(Leaderboards.Fastest_Reset, "full_reset", 10000)
 
 # SINGLE LEADERBOARDS
 

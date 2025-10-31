@@ -2,8 +2,10 @@ from helpers import *
 import multi_till
 unharvestablePumpkins = []
 def plantPumpkin():
-    if(get_ground_type() != Grounds.Soil):
+    if get_ground_type() != Grounds.Soil:
         till()
+    if get_entity_type() == Entities.Pumpkin:
+        harvest()
     plant(Entities.pumpkin)
     # if get_water() <= .50 and num_items(Items.Water) > 0:
     #     use_item(Items.Water)
@@ -26,8 +28,8 @@ def prepare():
         multi_till.startTill()
 def plantAndHarvest():
     global unharvestablePumpkins
-    jobDownwards(plantPumpkin)
-    jobDownwards(mapUnharvestablePumpkin)
+    jobUpwards(plantPumpkin)
+    jobUpwards(mapUnharvestablePumpkin)
     while True:
         if len(unharvestablePumpkins) == 0:
             break
@@ -42,13 +44,13 @@ def plantAndHarvest():
             plant(Entities.Pumpkin)
 
 def collect():
-    drones = spawnDronesSimultaneously(plantAndHarvest)
-    for drone in drones:
-        wait_for(drone)
+    spawnDronesLine(plantAndHarvest)
+    while num_drones() > 1:
+        pass
     harvest()
 
 def mainLoop():
-    prepare()
+    # prepare()
     while True: 
         if num_items(Items.Pumpkin) >= 200000000:
             break
@@ -57,4 +59,6 @@ def mainLoop():
     #     collect()
 
 if __name__ == "__main__":
+    clear()
+    set_world_size(4)
     mainLoop()

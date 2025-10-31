@@ -20,7 +20,8 @@ def bubbleSortVertical():
                 swap(South)
                 # sorted = False
             else:
-                change_hat(ALL_HATS[droneId % len(ALL_HATS)])
+                use_item(Items.Water)
+                # change_hat(ALL_HATS[droneId % len(ALL_HATS)])
             move(South)
         # if sorted:
         #     break
@@ -31,7 +32,8 @@ def bubbleSortVertical():
                 swap(North)
                 # sorted = False
             else:
-                change_hat(ALL_HATS[droneId % len(ALL_HATS)])
+                use_item(Items.Water)
+                # change_hat(ALL_HATS[droneId % len(ALL_HATS)])
             move(North)
         # if sorted:
         #     break
@@ -78,8 +80,8 @@ def plantAndHarvest():
 
 def collect():
     drones = spawnDronesSimultaneously(plantAndHarvest)
-    for drone in drones:
-        wait_for(drone)
+    while num_drones() > 1:
+        pass
     harvest()
 
 def mainLoop():

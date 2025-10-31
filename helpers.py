@@ -1,37 +1,38 @@
-ALL_HATS = [
-    # Hats.Dinosaur_Hat, # dont wear for fun. only one hat owned
-    Hats.Brown_Hat,
-    Hats.Cactus_Hat,
-    Hats.Carrot_Hat,
-    Hats.Gold_Hat,
-    # Hats.Gold_Trophy_Hat,
-    Hats.Golden_Cactus_Hat,
-    Hats.Golden_Carrot_Hat,
-    Hats.Golden_Gold_Hat,
-    Hats.Golden_Pumpkin_Hat,
-    Hats.Golden_Sunflower_Hat,
-    Hats.Golden_Tree_Hat,
-    Hats.Gray_Hat,
-    Hats.Green_Hat,
-    Hats.Pumpkin_Hat,
-    Hats.Purple_Hat,
-    # Hats.Silver_Trophy_Hat,
-    Hats.Straw_Hat,
-    Hats.Sunflower_Hat,
-    Hats.The_Farmers_Remains,
-    Hats.Top_Hat,
-    Hats.Traffic_Cone,
-    Hats.Traffic_Cone_Stack,
-    Hats.Tree_Hat,
-    Hats.Wizard_Hat,
-    # Hats.Wood_Trophy_Hat
-]
+# ALL_HATS = [
+#     # Hats.Dinosaur_Hat, # dont wear for fun. only one hat owned
+#     Hats.Brown_Hat,
+#     Hats.Cactus_Hat,
+#     Hats.Carrot_Hat,
+#     Hats.Gold_Hat,
+#     # Hats.Gold_Trophy_Hat,
+#     Hats.Golden_Cactus_Hat,
+#     Hats.Golden_Carrot_Hat,
+#     Hats.Golden_Gold_Hat,
+#     Hats.Golden_Pumpkin_Hat,
+#     Hats.Golden_Sunflower_Hat,
+#     Hats.Golden_Tree_Hat,
+#     Hats.Gray_Hat,
+#     Hats.Green_Hat,
+#     Hats.Pumpkin_Hat,
+#     Hats.Purple_Hat,
+#     # Hats.Silver_Trophy_Hat,
+#     Hats.Straw_Hat,
+#     Hats.Sunflower_Hat,
+#     Hats.The_Farmers_Remains,
+#     Hats.Top_Hat,
+#     Hats.Traffic_Cone,
+#     Hats.Traffic_Cone_Stack,
+#     Hats.Tree_Hat,
+#     Hats.Wizard_Hat,
+#     # Hats.Wood_Trophy_Hat
+# ]
 ALL_HATS = [Hats.Straw_Hat]
+ALL_DIRECTIONS = [North, East, South, West]
 worldSize = get_world_size()
 maxWorld = worldSize-1
 
 def flyToOrigin():
-    flyTo(0,get_world_size()-1)
+    flyTo(0,0)
 def longFlyToY(y):
     while(get_pos_y() < y):
         move(North)
@@ -86,12 +87,34 @@ def flytoY(yPos):
             move(South)
 
 def jobEverywhere(job):
-    flyTo(0, get_world_size()-1)
+    flyToOrigin()
     for _x in range(get_world_size()):
         for _y in range(get_world_size(), 0, -1):
             job()
             move(East)
         move(South)
+
+def jobEdge(job):
+    worldSize = get_world_size()
+    maxWorld = worldSize-1
+    # 0, 0
+    flyToOrigin() 
+    # 0, maxWorld
+    while get_pos_y() < maxWorld:
+        job()
+        move(North)
+    # maxWorld, maxWorld
+    while get_pos_x() < maxWorld:
+        job()
+        move(East)
+    # maxWorld, 0
+    while get_pos_y() > 0:
+        job()
+        move(South)
+    # 0, 0
+    while get_pos_x() > 0:
+        job()
+        move(West)
 
 def jobDownwards(job):
     for _y in range(get_world_size()):
@@ -112,8 +135,7 @@ def spawnDronesSimultaneously(droneJob):
     # set_world_size(max_drones()//2)
     top = get_world_size() -1
     half = get_world_size()//2
-    drones = []
-    # flyTo(0, 0) # Assumed at Game's WORLD ORIGIN
+    flyTo(0, 0) # Assumed at Game's WORLD ORIGIN
     for col in range(get_world_size()//2):
         def dronePositionRight():
             for i in range(half-col-1):
@@ -124,13 +146,9 @@ def spawnDronesSimultaneously(droneJob):
                 move(East)
             droneJob()
         drone = spawn_drone(dronePositionLeft)
-        if drone:
-            drones.append(drone)
         drone = spawn_drone(dronePositionRight)
-        if drone:
-            drones.append(drone)
     droneJob()
-    return drones
+    # return drones
 # TILL ONLY JOB = 3.27 seconds
 def spawnDronesSimultaneouslyFun(droneJob):
     # set_world_size(max_drones())
@@ -244,7 +262,6 @@ def spawnDronesFastest(droneJob):
         spawn_drone(dronePosition)
     droneJob()
 
-ALL_DIRECTIONS = [North, South, West, East]
 def spawnDroneRecursive():
     # def callRecursive():
     #     return spawnDroneRecursive(droneJob)

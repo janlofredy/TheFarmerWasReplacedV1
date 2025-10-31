@@ -1,16 +1,17 @@
 # ASSUME WORLD SIZE IS MULTIPLES OF 2
-# set_world_size(10)
-# clear()
-change_hat(Hats.Straw_Hat)
-while get_pos_x() > 0:
-    move(West)
-while get_pos_y() > 0:
-    move(South)
-change_hat(Hats.Dinosaur_Hat)
+# set_world_size(4)
+def prepare():
+    clear()
+
+# change_hat(Hats.Straw_Hat)
+# while get_pos_x() > 0:
+#     move(West)
+# while get_pos_y() > 0:
+#     move(South)
 face = North
 tail = 1
-change_hat(Hats.Dinosaur_Hat)
-appleX, appleY = measure()
+appleX, appleY = None, None
+# print(measure())
 area = get_world_size() ** 2
 
 DIRS = [North, South, East, West]
@@ -22,25 +23,25 @@ DIR_VECTORS = {
 }
 prepDip = get_world_size() - 2
 firstDipLength = (get_world_size() * 4) - prepDip - 4
-
+won = False
 def moveCheckAndSetApple(direction):
     global appleX
     global appleY
     global tail
+    global won
     move(direction)
     if get_entity_type() == Entities.Apple:
         appleX, appleY = measure()
         tail += 1
         if (get_world_size() ** 2) - 1 == tail:
-            # print("WE WIN", tail)
             move(North)
             move(South)
             move(East)
             move(West)
+            print("WE WIN", tail)
             change_hat(Hats.Straw_Hat)
-            tail = 1
-            change_hat(Hats.Dinosaur_Hat)
-            appleX, appleY = measure()
+            won = True
+            # appleX, appleY = measure()
 
 def dip(prep= False, col = 1, depth = prepDip):
     global prepDip
@@ -89,12 +90,30 @@ def reset():
     for col in range(dipsRequired):
         dip(True, (col+1)*2)
 
-moveCheckAndSetApple(North)
-for _ in range(prepDip):
+def startSnake():
+    global appleX
+    global appleY
+    global won
+    global prepDip
+    global tail
+    prepare()
+    tail = 1
+    won = False
+    change_hat(Hats.Dinosaur_Hat)
+    appleX, appleY = measure()
     moveCheckAndSetApple(North)
-moveCheckAndSetApple(East)
-while True:
-    if num_items(Items.Bone) >= 33488928:
-        break
-    dip(False, appleX, prepDip - appleY + 1)
-    reset()
+    for _ in range(prepDip):
+        moveCheckAndSetApple(North)
+    moveCheckAndSetApple(East)
+    
+    while not won:
+        # if num_items(Items.Bone) >= 2000000:
+        #     break
+        # if num_items(Items.Bone) >= 33488928:
+        #     break
+        dip(False, appleX, prepDip - appleY + 1)
+        reset()
+
+if __name__ == "__main__":
+    while True:
+        startSnake()

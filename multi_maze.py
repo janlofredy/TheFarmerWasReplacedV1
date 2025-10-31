@@ -33,9 +33,9 @@ def solveMazeHandOnWallRule():
                 direction.append(North)
         lastXY = [get_pos_x(), get_pos_y()]
         # TO LOOP INFINITELY
-        if get_entity_type() == Entities.Treasure:
-            harvest()
-    # harvest()
+        # if get_entity_type() == Entities.Treasure:
+        #     harvest()
+    harvest()
 
 def mainLoop():
     prepare()
