@@ -4,7 +4,7 @@
 # leaderboard_run(Leaderboards.Cactus, "multi_cactus", 100000)
 
 # 00:00:39
-# leaderboard_run(Leaderboards.Cactus, "lead_multi_cactus", 1000000)
+leaderboard_run(Leaderboards.Cactus, "lead_multi_cactus", 100000)
 
 # 00:10:30
 # leaderboard_run(Leaderboards.Pumpkins, "multi_pumpkin", 100000)
@@ -25,7 +25,7 @@
 
 # FASTEST RESET
 # print(simulate("full_reset", {}, {}, {}, -1, 10000))
-leaderboard_run(Leaderboards.Fastest_Reset, "full_reset", 10000)
+# leaderboard_run(Leaderboards.Fastest_Reset, "full_reset", 10000)
 
 # SINGLE LEADERBOARDS
 

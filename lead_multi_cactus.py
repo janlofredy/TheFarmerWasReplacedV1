@@ -334,14 +334,171 @@ def sortJob():
 # drones = spawnDronesFastest(lineSpamSort)
 # while num_drones() > 1:
 #     pass
-while num_items(Items.Cactus) < 33554432:
-    drones = spawnDronesFastest(cactusRepottingV2DroneJob)
-    while num_drones() > 1:
-        pass
-    drones = spawnDronesFastest(sortJob)
-    while num_drones() > 1:
-        pass
-    # drones = spawnDronesFastest(justMoveUp)
-    # while num_drones() > 1:
-    #     pass
-    harvest()
+
+# while num_items(Items.Cactus) < 33554432:
+#     drones = spawnDronesFastest(cactusRepottingV2DroneJob)
+#     while num_drones() > 1:
+#         pass
+#     drones = spawnDronesFastest(sortJob)
+#     while num_drones() > 1:
+#         pass
+#     # drones = spawnDronesFastest(justMoveUp)
+#     # while num_drones() > 1:
+#     #     pass
+#     harvest()
+
+
+def cactusFullSpawn5x5():
+    sizeSet = 5
+    dronesMax = sizeSet * sizeSet
+    droneX = get_pos_x()
+    droneY = get_pos_y()
+    till()
+    while True:
+        if num_drones() >= dronesMax:
+            if num_items(Items.Cactus) >= 33554432:
+                break
+            if get_entity_type() != Entities.Cactus:
+                plant(Entities.Cactus)
+                if get_water() <= .75:
+                    use_item(Items.Water)
+            
+            if droneX < maxWorldIndex:
+                cactusWest = measure(West)
+                currentCactus  = measure()
+                if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
+                    swap(West)
+            if droneX > 0:
+                cactusEast = measure(East)
+                currentCactus  = measure()
+                if cactusEast != None and currentCactus != None and currentCactus > cactusEast:
+                    swap(East)
+            if droneX < maxWorldIndex:
+                cactusWest = measure(West)
+                currentCactus  = measure()
+                if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
+                    swap(West)
+            if droneY < maxWorldIndex:
+                cactusSouth = measure(South)
+                currentCactus  = measure()
+                if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
+                    swap(South)
+            if droneY > 0:
+                cactusNorth = measure(North)
+                currentCactus  = measure()
+                if cactusNorth != None and currentCactus != None and currentCactus > cactusNorth:
+                    swap(North)
+            if droneY < maxWorldIndex:
+                cactusSouth = measure(South)
+                currentCactus  = measure()
+                if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
+                    swap(South)
+    print(num_drones())
+# I Think not needed. try ra nako later
+# nakadungog ko nimo hahaha kapoy on mic
+
+def startFullSpawn5x5():
+    set_world_size(5)
+    clear()
+    sizeSet = 8
+    dronesMax = (sizeSet * sizeSet)/2
+    filledPos = []
+    while num_drones() <= dronesMax:
+        pos_x = get_pos_x()
+        pos_y = get_pos_y()
+        current = (pos_x, pos_y)
+        if current not in filledPos:
+            filledPos.append(current)
+            spawn_drone(cactusFullSpawn5x5)
+            move(North)
+        else:
+            move(East)
+    move(East)
+    # Main drone's job is to harvest LOL 
+    # while num_items(Items.Cactus) < 33554432:
+    while True:
+        for i in range(10):
+            change_hat(Hats.Straw_Hat)
+        harvest()
+        # if can_harvest():
+        #     harvest()
+        if num_items(Items.Cactus) >= 33554432:
+            break
+
+def cactus8x8():
+    sizeSet = 8
+    dronesMax = (sizeSet * sizeSet)/2
+    droneX = get_pos_x()
+    droneY = get_pos_y()
+    if get_ground_type() != Grounds.Soil:
+        till()
+    tries = 0
+    limit = 50
+    while True:
+        if num_drones() >= dronesMax:
+            # if num_items(Items.Cactus) >= 33554432:
+            #     break
+            if get_entity_type() != Entities.Cactus:
+                plant(Entities.Cactus)
+                if get_water() <= .75:
+                    use_item(Items.Water)
+                swap(North)
+                plant(Entities.Cactus)
+            if droneX < maxWorldIndex:
+                cactusWest = measure(West)
+                currentCactus  = measure()
+                if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
+                    swap(West)
+            if droneX > 0:
+                cactusEast = measure(East)
+                currentCactus  = measure()
+                if cactusEast != None and currentCactus != None and currentCactus > cactusEast:
+                    swap(East)
+            if droneX < maxWorldIndex:
+                cactusWest = measure(West)
+                currentCactus  = measure()
+                if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
+                    swap(West)
+            if droneY < maxWorldIndex:
+                cactusSouth = measure(South)
+                currentCactus  = measure()
+                if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
+                    swap(South)
+            if droneY > 0:
+                cactusNorth = measure(North)
+                currentCactus  = measure()
+                if cactusNorth != None and currentCactus != None and currentCactus > cactusNorth:
+                    swap(North)
+            if droneY < maxWorldIndex:
+                cactusSouth = measure(South)
+                currentCactus  = measure()
+                if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
+                    swap(South)
+            tries = (tries + 1) % limit
+            if tries == (limit - 1):
+                harvest()
+
+
+def startWindowedSpawn8x8():
+    set_world_size(8)
+    clear()
+    sizeSet = 8
+    dronesMax = (sizeSet * sizeSet)/2
+    filledPos = []
+    while num_drones() < dronesMax:
+        pos_x = get_pos_x()
+        pos_y = get_pos_y()
+        current = (pos_x, pos_y)
+        if current not in filledPos:
+            filledPos.append(current)
+            spawn_drone(cactus8x8)
+            move(North)
+            if get_ground_type() != Grounds.Soil:
+                till()
+            move(North)
+        else:
+            move(East)
+            if get_ground_type() != Grounds.Soil:
+                till()
+            move(North)
+    cactus8x8()
