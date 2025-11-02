@@ -349,6 +349,8 @@ def sortJob():
 
 
 def cactusFullSpawn5x5():
+    worldSize =  get_world_size()
+    maxWorldIndex = worldSize-1
     sizeSet = 5
     dronesMax = sizeSet * sizeSet
     droneX = get_pos_x()
@@ -393,9 +395,7 @@ def cactusFullSpawn5x5():
                 currentCactus  = measure()
                 if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
                     swap(South)
-    print(num_drones())
-# I Think not needed. try ra nako later
-# nakadungog ko nimo hahaha kapoy on mic
+    # print(num_drones())
 
 def startFullSpawn5x5():
     set_world_size(5)
@@ -426,6 +426,8 @@ def startFullSpawn5x5():
             break
 
 def cactus8x8():
+    worldSize =  get_world_size()
+    maxWorldIndex = worldSize-1
     sizeSet = 8
     dronesMax = (sizeSet * sizeSet)/2
     droneX = get_pos_x()
@@ -433,50 +435,88 @@ def cactus8x8():
     if get_ground_type() != Grounds.Soil:
         till()
     tries = 0
-    limit = 50
+    limit = 10
     while True:
+        didNotSwap = True
         if num_drones() >= dronesMax:
-            # if num_items(Items.Cactus) >= 33554432:
-            #     break
+            if num_items(Items.Cactus) >= 33554432:
+                break
             if get_entity_type() != Entities.Cactus:
                 plant(Entities.Cactus)
                 if get_water() <= .75:
                     use_item(Items.Water)
-                swap(North)
-                plant(Entities.Cactus)
+                if droneY % 2 == 0:
+                    swap(North)
+                    plant(Entities.Cactus)
+                else: 
+                    swap(South)
+                    plant(Entities.Cactus)
             if droneX < maxWorldIndex:
-                cactusWest = measure(West)
-                currentCactus  = measure()
-                if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
-                    swap(West)
-            if droneX > 0:
                 cactusEast = measure(East)
                 currentCactus  = measure()
+                if cactusEast == None:
+                    swap(East)
+                    cactusEast = currentCactus
+                    currentCactus = measure()
                 if cactusEast != None and currentCactus != None and currentCactus > cactusEast:
                     swap(East)
-            if droneX < maxWorldIndex:
+                    didNotSwap = False
+            if droneX > 0:
                 cactusWest = measure(West)
                 currentCactus  = measure()
+                if cactusWest == None:
+                    swap(West)
+                    cactusWest = currentCactus
+                    currentCactus = measure()
                 if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
                     swap(West)
-            if droneY < maxWorldIndex:
-                cactusSouth = measure(South)
+            if droneX < maxWorldIndex:
+                cactusEast = measure(East)
                 currentCactus  = measure()
-                if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
-                    swap(South)
-            if droneY > 0:
+                if cactusEast == None:
+                    swap(East)
+                    cactusEast = currentCactus
+                    currentCactus = measure()
+                if cactusEast != None and currentCactus != None and currentCactus > cactusEast:
+                    swap(East)
+                    didNotSwap = False
+            if droneY < maxWorldIndex:
                 cactusNorth = measure(North)
                 currentCactus  = measure()
+                if cactusNorth == None:
+                    swap(North)
+                    cactusNorth = currentCactus
+                    currentCactus = measure()
                 if cactusNorth != None and currentCactus != None and currentCactus > cactusNorth:
                     swap(North)
-            if droneY < maxWorldIndex:
+                    didNotSwap = False
+            if droneY > 0:
                 cactusSouth = measure(South)
                 currentCactus  = measure()
+                if cactusSouth == None:
+                    swap(South)
+                    cactusSouth = currentCactus
+                    currentCactus = measure()
                 if cactusSouth != None and currentCactus != None and currentCactus < cactusSouth:
                     swap(South)
-            tries = (tries + 1) % limit
-            if tries == (limit - 1):
-                harvest()
+                    didNotSwap = False
+            if droneY < maxWorldIndex:
+                cactusNorth = measure(North)
+                currentCactus  = measure()
+                if cactusNorth == None:
+                    swap(North)
+                    cactusNorth = currentCactus
+                    currentCactus = measure()
+                if cactusNorth != None and currentCactus != None and currentCactus > cactusNorth:
+                    swap(North)
+                    didNotSwap = False
+            if droneX == 7 and droneY == 5:
+                if didNotSwap:
+                    tries = (tries + 1) % limit
+                else:
+                    tries = 0
+                if tries == (limit - 1) :
+                    harvest()
 
 
 def startWindowedSpawn8x8():
@@ -502,3 +542,5 @@ def startWindowedSpawn8x8():
                 till()
             move(North)
     cactus8x8()
+# startWindowedSpawn8x8()
+# startFullSpawn5x5()
