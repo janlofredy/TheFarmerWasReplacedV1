@@ -261,6 +261,29 @@ def spawnDronesFastest(droneJob):
             droneJob()
         spawn_drone(dronePosition)
     droneJob()
+# TILL ONLY JOB = 2.75 seconds
+def spawnDronesFastestVertical(droneJob):
+    half = 32//2
+    def dronePositionUp(): #2nd Drone
+        move(North)
+        for hPos in range(half-1): # Spawned By 2nd Drone half-1 times
+            def dronePosition():
+                for _ in range(half-hPos-1):
+                    move(North)
+                droneJob()
+            spawn_drone(dronePosition)
+        # change_hat(Hats.Straw_Hat)
+        # change_hat(Hats.Straw_Hat)
+        droneJob()
+    spawn_drone(dronePositionUp) # Spawning of 2nd Drone
+    # change_hat(Hats.Straw_Hat)
+    for hPos in range(half-1): # Spawned by 1st Drone half-1 times
+        def dronePosition():
+            for _ in range(half - hPos - 1):
+                move(South)
+            droneJob()
+        spawn_drone(dronePosition)
+    droneJob()
 
 def spawnDroneRecursive():
     # def callRecursive():
