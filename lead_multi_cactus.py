@@ -424,6 +424,7 @@ def startFullSpawn5x5():
         #     harvest()
         if num_items(Items.Cactus) >= 33554432:
             break
+# startFullSpawn5x5()
 
 def cactus8x8():
     worldSize =  get_world_size()
@@ -543,4 +544,67 @@ def startWindowedSpawn8x8():
             move(North)
     cactus8x8()
 # startWindowedSpawn8x8()
-# startFullSpawn5x5()
+
+def spamSortDoubleLine():
+    if get_pos_x() % 2 == 0:
+        move(North)
+    #     plant(Entities.Cactus)
+    #     swap(East)
+    #     plant(Entities.Cactus)
+    # else:
+    #     plant(Entities.Cactus)
+    #     swap(West)
+    #     plant(Entities.Cactus)
+    for i in range(worldSize//2):
+        for i in range(worldSize//2):
+            if get_pos_x() < maxWorldIndex:
+                cactusEast = measure(East)
+                currentCactus  = measure()
+                if cactusEast == None:
+                    swap(East)
+                    cactusEast = currentCactus
+                    currentCactus = measure()
+                else:
+                    change_hat(Hats.Straw_Hat)
+                if cactusEast != None and currentCactus != None and currentCactus > cactusEast:
+                    swap(East)
+                    didNotSwap = False
+                else:
+                    change_hat(Hats.Straw_Hat)
+            else:
+                change_hat(Hats.Straw_Hat)
+            if get_pos_x() > 0:
+                cactusWest = measure(West)
+                currentCactus  = measure()
+                if cactusWest == None:
+                    swap(West)
+                    cactusWest = currentCactus
+                    currentCactus = measure()
+                else:
+                    change_hat(Hats.Straw_Hat)
+                if cactusWest != None and currentCactus != None and currentCactus < cactusWest:
+                    swap(West)
+                else:
+                    change_hat(Hats.Straw_Hat)
+            else:
+                change_hat(Hats.Straw_Hat)
+
+        move(North)
+        move(North)
+
+def tillPlant():
+    till()
+    plant(Entities.Cactus)
+def tillAll():
+    jobUpwards(tillPlant)
+
+def startDoubleLineSpamSort():
+    # I DONT THINK THIS IS IT
+    clear()
+    spawnDronesFastest(tillAll)
+    while num_drones() > 1:
+        pass
+    spawnDronesFastest(spamSortDoubleLine)
+    while num_drones() > 1:
+        pass
+    harvest()
