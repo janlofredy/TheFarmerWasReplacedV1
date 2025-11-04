@@ -21,8 +21,8 @@
 # 00:11:33
 # leaderboard_run(Leaderboards.Wood, "multi_wood", 100000)
 
-seed = 0
-print(simulate('lead_multi_cactus2',Unlocks,{Items.Pumpkin : 100000000000, Items.Power : 1000000000000},{"a":13}, seed,1000))
+seed = -1
+# print(simulate('mazeTest',Unlocks,{Items.Pumpkin : 100000000000, Items.Power : 1000000000000},{"a":13}, seed,1000))
 
 # FASTEST RESET
 # print(simulate("full_reset", {}, {}, {}, -1, 10000))
@@ -48,8 +48,14 @@ print(simulate('lead_multi_cactus2',Unlocks,{Items.Pumpkin : 100000000000, Items
 # 00:23:04.807
 # leaderboard_run(Leaderboards.Wood_Single, "single_wood", 100000)
 
-# NOT RUN YET
-# leaderboard_run(Leaderboards.Maze_Single, "single_maze", 100000)
+# 00:05:36
+# leaderboard_run(Leaderboards.Maze_Single, "mazeTest", 10000)
+unlocks = Unlocks
+items = {Items.Weird_Substance : 1000000000, Items.Power: 1000000000}
+globals = {}
+speedup = 100000
+seed=0
+simulate("mazeTest", unlocks, items, globals, seed, speedup)
 
 # 00:23:34.443
 # leaderboard_run(Leaderboards.Dinosaur, "snake", 100000)
